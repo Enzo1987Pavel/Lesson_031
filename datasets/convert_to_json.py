@@ -1,10 +1,14 @@
 import csv
 import json
 
-CSV_ADS = "ads.csv"
+CSV_ADS = "ad.csv"
 JSON_ADS = "ads.json"
-CSV_CATEGORIES = "categories.csv"
+CSV_CATEGORIES = "category.csv"
 JSON_CATEGORIES = "categories.json"
+CSV_LOCATION = "location.csv"
+JSON_LOCATIONS = "locations.json"
+CSV_USER = "user.csv"
+JSON_USERS = "user.json"
 
 
 def convert_to_json(csv_file, json_file, model_name):
@@ -28,6 +32,14 @@ def convert_to_json(csv_file, json_file, model_name):
             if "price" in row:
                 row["price"] = int(row["price"])
 
+            if "author_id" and "category_id" in row:
+                row["author_id"] = int(row["author_id"])
+                row["category_id"] = int(row["category_id"])
+
+            if "age" and "location_id" in row:
+                row["age"] = int(row["age"])
+                row["location_id"] = int(row["location_id"])
+
             data_add["fields"] = row
             result_data.append(data_add)
 
@@ -37,3 +49,5 @@ def convert_to_json(csv_file, json_file, model_name):
 
 convert_to_json(CSV_ADS, JSON_ADS, "ads.ad")
 convert_to_json(CSV_CATEGORIES, JSON_CATEGORIES, "ads.category")
+convert_to_json(CSV_LOCATION, JSON_LOCATIONS, "ads.location")
+convert_to_json(CSV_USER, JSON_USERS, "ads.user")
