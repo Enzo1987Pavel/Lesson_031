@@ -49,5 +49,5 @@ def convert_to_json(csv_file, json_file, model_name):
 
 convert_to_json(CSV_ADS, JSON_ADS, "ads.ad")
 convert_to_json(CSV_CATEGORIES, JSON_CATEGORIES, "ads.category")
-convert_to_json(CSV_LOCATION, JSON_LOCATIONS, "ads.location")
-convert_to_json(CSV_USER, JSON_USERS, "ads.user")
+convert_to_json(CSV_LOCATION, JSON_LOCATIONS, "users.location")
+convert_to_json(CSV_USER, JSON_USERS, "users.user")
