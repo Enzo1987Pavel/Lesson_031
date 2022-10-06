@@ -19,12 +19,17 @@ def root(request):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class CategoryView(View):
-    def get(self, request):
-        categories = Category.objects.all()
+class CategoryListView(ListView):
+    model = Category
+
+    def get(self, request, *args, **kwargs):
+        super().get(self, *args, **kwargs)
+        qs = Category.objects.all()
         result_method = []
 
-        for category in categories:
+        self.object_list = self.object_list.order_by("name")
+
+        for category in qs:
             result_method.append({"id": category.id, "name": category.name})
         return JsonResponse(result_method, safe=False, json_dumps_params={"ensure_ascii": False})
 
