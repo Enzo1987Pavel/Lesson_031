@@ -1,13 +1,11 @@
 import json
 
 from django.http import JsonResponse
-from django.shortcuts import render
 
-# Create your views here.
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import DetailView
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
 
 from ads.models import Category, Ad
 
@@ -32,6 +30,45 @@ class CategoryView(View):
 
         return JsonResponse({"id": new_category.id, "name": new_category.name},
                             safe=False, json_dumps_params={"ensure_ascii": False})
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class CategoryCreateView(CreateView):
+    model = Category
+    fields = ["name"]
+
+    def post(self, request, *args, **kwargs):
+        super().post(request, *args, **kwargs)
+        data = json.loads(request.body)
+        category = Category.objects.create(name=data["name"])
+        return JsonResponse({"id": category.id, "name": category.name},
+                            safe=False, json_dumps_params={"ensure_ascii": False})
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class CategoryUpdateView(UpdateView):
+    model = Category
+    fields = ["name"]
+
+    def patch(self, request, *args, **kwargs):
+        super().post(request, *args, **kwargs)
+        data = json.loads(request.body)
+        self.object.name = data["name"]
+        self.object.save()
+
+        return JsonResponse({"id": self.object.id, "name": self.object.name},
+                            safe=False, json_dumps_params={"ensure_ascii": False})
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class CategoryDeleteView(DeleteView):
+    model = Category
+    success_url = "/"
+
+    def delete(self, request, *args, **kwargs):
+        super().delete(request, *args, **kwargs)
+
+        return JsonResponse({}, status=204)
 
 
 class CategoryDetailView(DetailView):
@@ -81,6 +118,30 @@ class AdView(View):
              "description": new_ad.description,
              "address": new_ad.address,
              "is_published": new_ad.is_published
+             },
+            safe=False, json_dumps_params={"ensure_ascii": False}
+        )
+
+
+@method_decorator(csrf_exempt, name="dispatch")
+class AdUploadImageView(UpdateView):
+    model = Ad
+    fields = ["image"]
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object.image = request.FILES.get("image")
+        self.object.save()
+
+        return JsonResponse(
+            {"id": self.object.id,
+             "name": self.object.name,
+             "author": self.object.author.username,
+             "price": self.object.price,
+             "description": self.object.description,
+             "is_published": self.object.is_published,
+             "image": self.object.image.url,
+             "category": self.object.category.name
              },
             safe=False, json_dumps_params={"ensure_ascii": False}
         )
