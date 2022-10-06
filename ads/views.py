@@ -1,13 +1,17 @@
 import json
 
+from django.core.paginator import Paginator
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, ListView
 
 from ads.models import Category, Ad
+from avito import settings
+from users.models import User
 
 
 def root(request):
@@ -81,43 +85,63 @@ class CategoryDetailView(DetailView):
 
 
 @method_decorator(csrf_exempt, name="dispatch")
-class AdView(View):
-    def get(self, request):
-        all_ads = Ad.objects.all()
+class AdListView(ListView):
+    model = Ad
+    qs = Ad.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        super().get(self, *args, **kwargs)
+        self.object_list = self.object_list.order_by("-price")
+        paginator = Paginator(object_list=self.object_list, per_page=settings.TOTAL_ON_PAGE)
+        page = request.GET.get("page")
+        page_obj = paginator.get_page(page)
+
         result_method = []
 
-        for ad in all_ads:
+        for ad in page_obj:
             result_method.append(
                 {"id": ad.id,
                  "name": ad.name,
-                 "author": ad.author,
+                 "author": ad.author.username,
                  "price": ad.price,
                  "description": ad.description,
-                 "address": ad.address,
-                 "is_published": ad.is_published
+                 "is_published": ad.is_published,
+                 "image": ad.image.url,
+                 "category": ad.category.name if ad.category else "Нет категории"
                  })
 
-        return JsonResponse(result_method, safe=False, json_dumps_params={"ensure_ascii": False})
+        return JsonResponse({"ads": result_method, "Current_page": page_obj.number, "Total_ads": page_obj.paginator.count},
+                            safe=False, json_dumps_params={"ensure_ascii": False})
 
-    def post(self, request):
+
+@method_decorator(csrf_exempt, name="dispatch")
+class AdCreateView(CreateView):
+    model = Ad
+    fields = ["name", "author", "price", "description", "is_published", "category"]
+
+    def post(self, request, *args, **kwargs):
         data = json.loads(request.body)
+
+        author = get_object_or_404(User, id=data["author"])
+        category = get_object_or_404(Category, id=data["category"])
+
         new_ad = Ad.objects.create(
             name=data["name"],
-            author=data["author"],
+            author=author,
             price=data["price"],
             description=data["description"],
-            address=data["address"],
-            is_published=data["is_published"]
+            is_published=data["is_published"] if "is_published" in data else False,
+            category=category
         )
 
         return JsonResponse(
             {"id": new_ad.id,
              "name": new_ad.name,
-             "author": new_ad.author,
+             "author": new_ad.author.username,
              "price": new_ad.price,
              "description": new_ad.description,
-             "address": new_ad.address,
-             "is_published": new_ad.is_published
+             "is_published": new_ad.is_published,
+             "category": new_ad.category.name
              },
             safe=False, json_dumps_params={"ensure_ascii": False}
         )
@@ -155,11 +179,12 @@ class AdDetailView(DetailView):
         return JsonResponse(
             {"id": ad.id,
              "name": ad.name,
-             "author": ad.author,
+             "author": ad.author.username,
              "price": ad.price,
              "description": ad.description,
-             "address": ad.address,
-             "is_published": ad.is_published
+             "is_published": ad.is_published,
+             "image": ad.image.url,
+             "category": ad.category.name
              },
             safe=False, json_dumps_params={"ensure_ascii": False}
         )
