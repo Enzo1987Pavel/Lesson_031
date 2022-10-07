@@ -27,8 +27,6 @@ class CategoryListView(ListView):
         qs = Category.objects.all()
         result_method = []
 
-        self.object_list = self.object_list.order_by("name")
-
         for category in qs:
             result_method.append({"id": category.id, "name": category.name})
         return JsonResponse(result_method, safe=False, json_dumps_params={"ensure_ascii": False})
@@ -77,7 +75,7 @@ class CategoryDeleteView(DeleteView):
     def delete(self, request, *args, **kwargs):
         super().delete(request, *args, **kwargs)
 
-        return JsonResponse({}, status=204)
+        return JsonResponse({"status": "ok"}, status=204)
 
 
 class CategoryDetailView(DetailView):

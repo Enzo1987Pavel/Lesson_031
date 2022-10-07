@@ -7,8 +7,8 @@ class Location(models.Model):
         verbose_name_plural = "Местоположения"
 
     name = models.CharField(verbose_name="Местоположение", max_length=100)
-    lat = models.DecimalField(verbose_name="Широта", max_digits=15, decimal_places=10)
-    lng = models.DecimalField(verbose_name="Долгота", max_digits=15, decimal_places=10)
+    lat = models.DecimalField(verbose_name="Широта", max_digits=15, decimal_places=10, null=True)
+    lng = models.DecimalField(verbose_name="Долгота", max_digits=15, decimal_places=10, null=True)
 
     def __str__(self):
         return self.name

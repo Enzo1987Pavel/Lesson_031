@@ -7,6 +7,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = "Категория"
         verbose_name_plural = "Категории"
+        ordering = ["name"]
 
     name = models.CharField(verbose_name="Название категории", max_length=100, unique=True)
 
@@ -23,7 +24,7 @@ class Ad(models.Model):
     author = models.ForeignKey(User, verbose_name="Автор", null=True, on_delete=models.CASCADE, related_name="ads")
     price = models.PositiveIntegerField(verbose_name="Цена", null=True)
     description = models.CharField(max_length=500, null=True)
-    is_published = models.BooleanField(verbose_name="Объявление размещено?", help_text="Если данный пункт отмечен - объявление размещено, иначе - ещё не размещено", default=False)
+    is_published = models.BooleanField(verbose_name="Объявление размещено?", help_text="Если данный пункт отмечен - объявление размещено", default=False)
     image = models.ImageField(verbose_name="Изображение", upload_to="images",  null=True, blank=True)
     category = models.ForeignKey(Category, verbose_name="Категория", null=True, on_delete=models.CASCADE, related_name="ads")
 
