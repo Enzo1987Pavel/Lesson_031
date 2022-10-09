@@ -61,7 +61,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         return user
 
 
-class UserDeleteView(serializers.ModelSerializer):
+class UserDeleteSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id"]
