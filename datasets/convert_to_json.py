@@ -36,9 +36,9 @@ def convert_to_json(csv_file, json_file, model_name):
                 row["author_id"] = int(row["author_id"])
                 row["category_id"] = int(row["category_id"])
 
-            if "age" and "location_id" in row:
+            if "age" and "location" in row:
                 row["age"] = int(row["age"])
-                row["location_id"] = int(row["location_id"])
+                row["location"] = [int(row["location"])]
 
             data_add["fields"] = row
             result_data.append(data_add)
@@ -47,7 +47,7 @@ def convert_to_json(csv_file, json_file, model_name):
         json_files.write(json.dumps(result_data, ensure_ascii=False))
 
 
-convert_to_json(CSV_ADS, JSON_ADS, "ads.ad")
-convert_to_json(CSV_CATEGORIES, JSON_CATEGORIES, "ads.category")
-convert_to_json(CSV_LOCATION, JSON_LOCATIONS, "users.location")
+# convert_to_json(CSV_ADS, JSON_ADS, "ads.ad")
+# convert_to_json(CSV_CATEGORIES, JSON_CATEGORIES, "ads.category")
+# convert_to_json(CSV_LOCATION, JSON_LOCATIONS, "users.location")
 convert_to_json(CSV_USER, JSON_USERS, "users.user")
