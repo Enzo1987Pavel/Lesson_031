@@ -34,7 +34,6 @@ class User(AbstractUser):
     first_name = models.CharField(verbose_name="Имя", max_length=100)
     last_name = models.CharField(verbose_name="Фамилия", max_length=100)
     username = models.CharField(verbose_name="Никнейм", max_length=50, unique=True)
-    password = models.CharField(verbose_name="Пароль", max_length=50)
     role = models.CharField(verbose_name="Группа", choices=UserRoles.choices, default="member", max_length=16)
     age = models.PositiveIntegerField(verbose_name="Возраст", null=True)
     location = models.ManyToManyField(Location, verbose_name="Местоположение")
