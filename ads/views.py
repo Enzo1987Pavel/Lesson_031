@@ -6,10 +6,12 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, CreateView, UpdateView, DeleteView, ListView
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, CreateAPIView
+from rest_framework.permissions import IsAuthenticated
 
-from ads.models import Category, Ad
-from ads.serializers import AdListSerializer
+from ads.models import Category, Ad, Selection
+from ads.serializers import AdListSerializer, AdDetailSerializer, SelectionCreateSerializer, SelectionListSerializer, \
+    SelectionDetailSerializer, SelectionDeleteSerializer, SelectionUpdateSerializer
 from users.models import User
 
 
@@ -171,20 +173,32 @@ class AdUploadImageView(UpdateView):
         )
 
 
-class AdDetailView(DetailView):
-    model = Ad
+class AdDetailView(RetrieveAPIView):
+    queryset = Ad.objects.all()
+    serializer_class = AdDetailSerializer
+    permission_classes = [IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
-        ad = self.get_object()
-        return JsonResponse(
-            {"id": ad.id,
-             "name": ad.name,
-             "author": ad.author.username,
-             "price": ad.price,
-             "description": ad.description,
-             "is_published": ad.is_published,
-             "image": ad.image.url,
-             "category": ad.category.name
-             },
-            safe=False, json_dumps_params={"ensure_ascii": False}
-        )
+
+class SelectionCreateView(CreateAPIView):
+    queryset = Selection.objects.all()
+    serializer_class = SelectionCreateSerializer
+
+
+class SelectionListView(ListAPIView):
+    queryset = Selection.objects.all()
+    serializer_class = SelectionListSerializer
+
+
+class SelectionDetailView(RetrieveAPIView):
+    queryset = Selection.objects.all()
+    serializer_class = SelectionDetailSerializer
+
+
+class SelectionUpdateView(UpdateAPIView):
+    queryset = Selection.objects.all()
+    serializer_class = SelectionUpdateSerializer
+
+
+class SelectionDeleteView(DestroyAPIView):
+    queryset = Selection.objects.all()
+    serializer_class = SelectionDeleteSerializer
