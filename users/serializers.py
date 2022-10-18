@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
 from users.models import User, Location
@@ -30,7 +31,9 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return super().is_valid(raise_exception=raise_exception)
 
     def create(self, validated_data):
-        user = User.objects.create(**validated_data)
+        password = make_password(validated_data["password"])
+
+        user = User.objects.create(**validated_data | {'password': password})
 
         for loc in self._locations:
             location, _ = Location.objects.get_or_create(name=loc)
