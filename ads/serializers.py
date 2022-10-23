@@ -12,7 +12,7 @@ class AdListSerializer(serializers.ModelSerializer):
 
 
 class AdCreateSerializer(serializers.ModelSerializer):
-    is_published = serializers.BooleanField(validators=[is_published_validator])
+    is_published = serializers.BooleanField(validators=[is_published_validator], required=False)
 
     class Meta:
         model = Ad

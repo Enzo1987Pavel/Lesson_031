@@ -22,7 +22,7 @@ class Ad(models.Model):
         verbose_name = "Объявление"
         verbose_name_plural = "Объявления"
 
-    name = models.CharField(verbose_name="Название объявления", validators=[MinLengthValidator(5)], max_length=100, unique=True)
+    name = models.CharField(verbose_name="Название объявления", validators=[MinLengthValidator(10)], max_length=100, unique=True)
     author = models.ForeignKey(User, verbose_name="Автор", null=True, on_delete=models.CASCADE, related_name="ads")
     price = models.PositiveIntegerField(verbose_name="Цена", null=True)
     description = models.CharField(verbose_name="Подробная информация", max_length=500, null=True, blank=True)  # blank - для Django-админки
