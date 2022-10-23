@@ -146,3 +146,6 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'users.User'
+
+# Для поля "birth_date" устанавливаем минимальный возраст
+USER_MIN_AGE = 9
