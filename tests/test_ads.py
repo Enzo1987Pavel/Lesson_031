@@ -39,18 +39,3 @@ def test_get_one_ads(api_client, ad):
 
     assert response.status_code == status.HTTP_200_OK
     assert response.json()["id"] == ad.id
-
-
-# # Тест с ошибкой из-за несоответствия длины строки по ключу "name"
-# @pytest.mark.django_db
-# def test_add_ads_fatal(api_client, user):
-#     data = {
-#         "name": "NewTest",
-#         "author": user.id,
-#         "price": 100
-#     }
-#
-#     url = reverse("create_ad")
-#     response = api_client.post(url, data=json.dumps(data), content_type="application/json")
-#
-#     assert response.json()["name"] == data["name"]
